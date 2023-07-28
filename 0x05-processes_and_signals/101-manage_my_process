@@ -1,39 +1,37 @@
 #!/usr/bin/env bash
-# This is a bash init script that manages a daemon.
+# This script manages 'manage_my_process'
 
-argv1=$1
-tmpfile="/var/run/my_process.pid"
+#!/usr/bin/env bash
+# Manages 'manage_my_process'
 
-start_my_process() {
-    ./manage_my_process &
-    echo "$!" > "$tmpfile"
-}
-
-stop_my_process() {
-    #kill "$(cat "$tmpfile")"
-    sudo pkill -f "./manage_my_process"
-    rm "$tmpfile"
-}
-
-case "$argv1" in
-    start)
-        echo "manage_my_process starting..."
-        start_my_process
-        echo "manage_my_process started"
-        ;;
-    stop)
-        echo "manage_my_process stopping..."
-        stop_my_process
-        echo "manage_my_process stopped"
-        ;;
-    restart)
-        echo "manage_my_process restarting..."
-        stop_my_process
-        start_my_process
-        echo "manage_my_process restarted"
-        ;;
-    *)
-        echo "Usage: manage_my_process {start|stop|restart}"
-        ;;
-esac
-
+if [ $# -gt 0 ]
+then
+    if [ "$1" == "start" ]
+    then
+	./manage_my_process &
+	touch /var/run/my_process.pid
+#	echo $(pgrep -f manage_my_process) > /var/run/my_process.pid
+	echo "$!" > /var/run/my_process.pid
+	echo "manage_my_process started"
+    elif [ "$1" == "stop" ]
+    then
+#	kill $(pgrep -f manage_my_process)
+	echo "manage_my_process stopped"
+	kill "$(cat /var/run/my_process.pid)"
+	rm -f /var/run/my_process.pid
+    elif [ "$1" == "restart" ]
+    then
+#	kill $(pgrep -f manage_my_process)
+	kill "$(cat /var/run/my_process.pid)"
+	rm -f /var/run/my_process.pid
+	./manage_my_process &
+#	echo $(pgrep -f manage_my_process) > /var/run/my_process.pid
+	touch /var/run/my_process.pid
+	echo "$!" > /var/run/my_process.pid
+	echo "manage_my_process restarted"
+    else
+	echo "Usage: manage_my_process {start|stop|restart}"
+    fi
+else
+    echo "Usage: manage_my_process {start|stop|restart}"
+fi
