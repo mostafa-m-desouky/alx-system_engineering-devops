@@ -1,30 +1,12 @@
 #!/usr/bin/env bash
-#Install nginx web server configures it on a remote server
-sudo apt-get -y  update
-sudo apt-get -y install nginx
-sudo ufw allow 'Nginx HTTP'
-echo "Hello World!" > /var/www/html/index.html
-# OR
-#echo "Hello World!" | tee /var/www/html/index.nginx-debian.html
+# Script to install nginx on server
 
-echo "Ceci n'est pas une page" > 404.html
-sudo mv 404.html /var/www/html
-echo "server {
-        listen 80 default_server;
-        listen [::]:80 default_server;
+sudo apt-get update
+sudo apt-get install -y nginx
+echo "Holberton School" >> /var/www/html/index.html
+sed -i '38i\rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
 
-        root /var/www/html;
-        index index.html;
+echo "Ceci n'est pas une page" >> /var/www/html/error_404.html
+sed -i '39i\error_page 404 /error_404.html;' /etc/nginx/sites-available/default
 
-        location /redirect_me {
-                return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-        }
-	
-error_page 404 /404.html;
-	location = /404.html{
-	internal;
-	}
-}" > default
-
-sudo mv -f default /etc/nginx/sites-available/default
-sudo service nginx restart
+service nginx start
