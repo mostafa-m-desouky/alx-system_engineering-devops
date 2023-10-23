@@ -23,6 +23,5 @@ When you learn command line you are able to do your task mush faster
 
 `mkdir` Stands for "make a new directory"
 
-then you can give any shell script or any shell command
 
 
